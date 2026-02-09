@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pregunta Importante 💖</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* VIDEO DE FONDO */
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      opacity: 0.45;
+    }
+
+    /* CONTENIDO */
+    .media {
+      width: clamp(300px, 60vw, 320px);
+      margin-bottom: 30px;
+      z-index: 10;
+    }
+
+    .media img {
+      width: 100%;
+      border-radius: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+      gap: 16px;
+      align-items: stretch;
+      z-index: 10;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: clamp(14px, 4vw, 18px);
+      padding: 16px;
+      transition: all 0.35s ease;
+      white-space: nowrap;
+    }
+
+    #yesBtn {
+      background-color: #4caf50;
+      color: white;
+      flex-grow: 1;
+    }
+
+    #noBtn {
+      background-color: #f44336;
+      color: white;
+      flex-grow: 1;
+    }
+    /* =========================
+   ESTILO IMAGEN FINAL EN MOVIL
+========================= */
+@media (max-width: 768px) {
+
+  .media.big {
+    width: 90vw;          /* casi toda la pantalla */
+    height: 80vh;         /* deja aire arriba y abajo */
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+.media.big {
+  animation: zoomIn 2s ease;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.50);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+  .media.big img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;  /* NO se corta */
+    border-radius: 20px;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- 🎥 VIDEO DE FONDO -->
+  <video autoplay muted loop id="bgVideo">
+    <source src="media/video-fondo.mp4" type="video/mp4">
+  </video>
+
+  <div class="media" id="media">
+    <img src="media/quieres-ser-gif.gif" alt="Gif inicial">
+  </div>
+
+  <div class="buttons" id="buttons">
+    <button id="yesBtn">Sí, sí quiero 💖</button>
+    <button id="noBtn">No, no quiero 🙈</button>
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const media = document.getElementById("media");
+
+    let yesGrow = 1;
+    let noGrow = 1;
+
+    const MAX_YES = 100000;
+    const MIN_NO = 0.3;
+
+    // 📝 FRASES PARA EL BOTÓN "NO"
+    const frasesNo = [
+      "¿Por qué no? 🤨",
+      "Sé que sí quieres 😏",
+      "Ándale, di que sí 💘",
+      "No seas así 😭",
+      "Piensalo bien 🤔",
+      "No puedes decir no jeje 😌",
+      "Vamos, solo di que sí 🤍",
+      "No te hagas del rogar 😳",
+      "En el fondo quieres decir sí 😜"
+    ];
+
+    noBtn.addEventListener("click", () => {
+      // Crecimiento real
+      if (yesGrow < MAX_YES) {
+        yesGrow += 5;
+        noGrow -= 1;
+      }
+
+      yesBtn.style.flexGrow = yesGrow;
+      noBtn.style.flexGrow = Math.max(noGrow, MIN_NO);
+
+      yesBtn.style.fontSize = `${18 + yesGrow}px`;
+      noBtn.style.fontSize = `${Math.max(12, 18 - yesGrow / 2)}px`;
+
+      // Cambiar frase del botón NO
+      const indice = Math.floor(Math.random() * frasesNo.length);
+      noBtn.innerHTML = frasesNo[indice];
+    });
+
+    yesBtn.addEventListener("click", () => {
+  media.innerHTML = `
+    <img src="media/sabia-que-si-gif.gif">
+  `;
+
+  media.classList.add("big"); // 👈 hace grande la imagen en móvil
+  document.getElementById("buttons").style.display = "none";
+});
+
+  </script>
+
+</body>
+</html>
