@@ -6,9 +6,7 @@
   <title>Pregunta Importante 💖</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -27,8 +25,7 @@
     /* VIDEO DE FONDO */
     #bgVideo {
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -49,100 +46,75 @@
     }
 
     .buttons {
-  display: flex;
-  width: 100%;
-  max-width: 400px;
-  gap: 16px;
-  align-items: stretch;
-  z-index: 10;
-}
+      display: flex;
+      width: 100%;
+      max-width: 400px;
+      gap: 16px;
+      z-index: 10;
+      transition: transform 0.35s ease;
+    }
 
     button {
       border: none;
       border-radius: 14px;
       cursor: pointer;
-      font-size: clamp(14px, 4vw, 18px);
       padding: 16px;
+      font-size: clamp(14px, 4vw, 18px);
       transition: all 0.35s ease;
       white-space: nowrap;
+      overflow: hidden;
     }
 
     #yesBtn {
       background-color: #4caf50;
       color: white;
       flex-grow: 1;
+      transform-origin: center;
     }
-    
-    #yesBtn {
-  transform-origin: center;
-}
-
 
     #noBtn {
       background-color: #f44336;
       color: white;
       flex-grow: 1;
     }
-    /* =========================
-   ESTILO IMAGEN FINAL EN MOVIL
-========================= */
-@media (max-width: 768px) {
 
-  .media.big {
-    width: 90vw;          /* casi toda la pantalla */
-    height: 80vh;         /* deja aire arriba y abajo */
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-.media.big {
-  animation: zoomIn 2s ease;
-}
+    /* BOTONES EN COLUMNA EN MÓVIL */
+    @media (max-width: 768px) {
+      .buttons {
+        flex-direction: column;
+        max-width: 90vw;
+      }
+    }
 
-@keyframes zoomIn {
-  from {
-    transform: scale(0.50);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
+    /* IMAGEN FINAL GRANDE EN MÓVIL */
+    @media (max-width: 768px) {
+      .media.big {
+        width: 90vw;
+        height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: zoomIn 1.2s ease;
+      }
 
-  .media.big img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;  /* NO se corta */
-    border-radius: 20px;
-  }
-}
-/* =========================
-   BOTONES EN COLUMNA EN MOVIL
-========================= */
-@media (max-width: 768px) {
-  .buttons {
-    flex-direction: column;
-    max-width: 90vw;
-  }
+      .media.big img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 20px;
+      }
+    }
 
-  button {
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-.buttons {
-  transition: transform 0.35s ease;
-}
-
+    @keyframes zoomIn {
+      from { transform: scale(0.6); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- 🎥 VIDEO DE FONDO -->
-  <video autoplay muted loop id="bgVideo">
+  <!-- VIDEO DE FONDO -->
+  <video autoplay muted loop playsinline id="bgVideo">
     <source src="media/video-fondo.mp4" type="video/mp4">
   </video>
 
@@ -158,83 +130,35 @@
   <script>
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
+    const buttons = document.getElementById("buttons");
     const media = document.getElementById("media");
 
     let yesGrow = 1;
     let noGrow = 1;
 
-    const MAX_YES = 100000;
-    const MIN_NO = 0.3;
-
-    // 📝 FRASES PARA EL BOTÓN "NO"
     const frasesNo = [
       "¿Por qué no? 🤨",
       "Sé que sí quieres 😏",
       "Ándale, di que sí 💘",
       "No seas así 😭",
-      "Piensalo bien 🤔",
-      "No puedes decir no jeje 😌",
+      "Piénsalo bien 🤔",
       "Vamos, solo di que sí 🤍",
       "No te hagas del rogar 😳",
       "En el fondo quieres decir sí 😜"
     ];
 
     noBtn.addEventListener("click", () => {
-      noBtn.addEventListener("click", () => {
-  if (yesGrow < MAX_YES) {
-    yesGrow += 5;
-    noGrow -= 1;
-  }
+      yesGrow += 5;
+      noGrow = Math.max(noGrow - 1, 0.3);
 
-  yesBtn.style.flexGrow = yesGrow;
-  noBtn.style.flexGrow = Math.max(noGrow, MIN_NO);
+      // Empuje real
+      yesBtn.style.flexGrow = yesGrow;
+      noBtn.style.flexGrow = noGrow;
 
-  // Tamaño controlado del botón SÍ
-  const newSize = Math.min(18 + yesGrow, 42);
-  yesBtn.style.fontSize = `${newSize}px`;
-  noBtn.style.fontSize = `${Math.max(12, 18 - yesGrow / 2)}px`;
+      // Tamaño controlado
+      const size = Math.min(18 + yesGrow, 42);
+      yesBtn.style.fontSize = size + "px";
+      noBtn.style.fontSize = Math.max(12, 18 - yesGrow / 2) + "px";
 
-  // 👉 SUBIR LOS BOTONES HACIA EL CENTRO
-  const maxLift = 120; // límite en px (seguro para móvil)
-  const lift = Math.min(yesGrow * 2, maxLift);
-  if (window.innerWidth <= 768) {
-  document.getElementById("buttons").style.transform = `translateY(-${lift}px)`;
-}
-
-
-  // Cambiar frase del botón NO
-  const indice = Math.floor(Math.random() * frasesNo.length);
-  noBtn.innerHTML = frasesNo[indice];
-});
-
-      }
-
-      const newSize = Math.min(18 + yesGrow, 42); // límite seguro en móvil
-      yesBtn.style.fontSize = `${newSize}px`;
-
-      noBtn.style.flexGrow = Math.max(noGrow, MIN_NO);
-
-      yesBtn.style.fontSize = `${18 + yesGrow}px`;
-      noBtn.style.fontSize = `${Math.max(12, 18 - yesGrow / 2)}px`;
-
-      // Cambiar frase del botón NO
-      const indice = Math.floor(Math.random() * frasesNo.length);
-      noBtn.innerHTML = frasesNo[indice];
-    });
-
-    yesBtn.addEventListener("click", () => {
-  media.innerHTML = `
-    <img src="media/sabia-que-si-gif.gif">
-  `;
-
-  media.classList.add("big"); // 👈 hace grande la imagen en móvil
-  document.getElementById("buttons").style.display = "none";
-});
-
-  </script>
-
-</body>
-</html>
-
-
-
+      // Subir botones hacia el centro (solo móvil)
+      i
