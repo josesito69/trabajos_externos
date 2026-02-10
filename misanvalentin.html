@@ -161,4 +161,21 @@
       noBtn.style.fontSize = Math.max(12, 18 - yesGrow / 2) + "px";
 
       // Subir botones hacia el centro (solo móvil)
-      i
+      if (window.innerWidth <= 768) {
+        const lift = Math.min(yesGrow * 2, 120);
+        buttons.style.transform = `translateY(-${lift}px)`;
+      }
+
+      // Cambiar texto del NO
+      noBtn.innerHTML = frasesNo[Math.floor(Math.random() * frasesNo.length)];
+    });
+
+    yesBtn.addEventListener("click", () => {
+      media.innerHTML = `<img src="media/sabia-que-si-gif.gif">`;
+      media.classList.add("big");
+      buttons.style.display = "none";
+    });
+  </script>
+
+</body>
+</html>
