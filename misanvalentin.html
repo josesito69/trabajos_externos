@@ -133,6 +133,9 @@
     text-overflow: ellipsis;
   }
 }
+.buttons {
+  transition: transform 0.35s ease;
+}
 
   </style>
 </head>
@@ -177,10 +180,33 @@
     ];
 
     noBtn.addEventListener("click", () => {
-      // Crecimiento real
-      if (yesGrow < MAX_YES) {
-        yesGrow += 5;
-        noGrow -= 1;
+      noBtn.addEventListener("click", () => {
+  if (yesGrow < MAX_YES) {
+    yesGrow += 5;
+    noGrow -= 1;
+  }
+
+  yesBtn.style.flexGrow = yesGrow;
+  noBtn.style.flexGrow = Math.max(noGrow, MIN_NO);
+
+  // Tamaño controlado del botón SÍ
+  const newSize = Math.min(18 + yesGrow, 42);
+  yesBtn.style.fontSize = `${newSize}px`;
+  noBtn.style.fontSize = `${Math.max(12, 18 - yesGrow / 2)}px`;
+
+  // 👉 SUBIR LOS BOTONES HACIA EL CENTRO
+  const maxLift = 120; // límite en px (seguro para móvil)
+  const lift = Math.min(yesGrow * 2, maxLift);
+  if (window.innerWidth <= 768) {
+  document.getElementById("buttons").style.transform = `translateY(-${lift}px)`;
+}
+
+
+  // Cambiar frase del botón NO
+  const indice = Math.floor(Math.random() * frasesNo.length);
+  noBtn.innerHTML = frasesNo[indice];
+});
+
       }
 
       const newSize = Math.min(18 + yesGrow, 42); // límite seguro en móvil
@@ -209,5 +235,6 @@
 
 </body>
 </html>
+
 
 
