@@ -33,7 +33,7 @@
       opacity: 0.45;
     }
 
-    /* CONTENIDO */
+    /* CONTENIDO PRINCIPAL */
     .media {
       width: clamp(300px, 60vw, 320px);
       margin-bottom: 30px;
@@ -45,6 +45,7 @@
       border-radius: 20px;
     }
 
+    /* BOTONES */
     .buttons {
       display: flex;
       width: 100%;
@@ -69,7 +70,6 @@
       background-color: #4caf50;
       color: white;
       flex-grow: 1;
-      transform-origin: center;
     }
 
     #noBtn {
@@ -86,34 +86,67 @@
       }
     }
 
-    /* IMAGEN FINAL GRANDE EN MÓVIL */
-    @media (max-width: 768px) {
-      .media.big {
-        width: 90vw;
-        height: 80vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        animation: zoomIn 1.2s ease;
-      }
-
-      .media.big img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        border-radius: 20px;
-      }
+    /* CONTENIDO FINAL */
+    .final-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
     }
 
+    /* TARJETA EMMA (inicia oculta) */
+    .emma-card {
+      background: rgba(255,255,255,0.85);
+      padding: 10px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+      transform: translateY(-10px) rotate(-2deg);
+      opacity: 0;
+      transition: all 0.8s ease;
+    }
+
+    .emma-card img {
+      display: block;
+      width: 220px;
+      max-width: 80vw;
+      border-radius: 12px;
+    }
+
+    /* Cuando aparece Emma */
+    .emma-card.show {
+      opacity: 1;
+      transform: translateY(0) rotate(-2deg);
+      animation: heartbeat 1.2s ease;
+    }
+
+    /* IMAGEN FINAL GRANDE EN MÓVIL */
+@media (max-width: 768px) {
+  .media.big {
+    width: 90vw;
+    max-height: 85vh;     /* límite visual */
+    overflow-y: auto;    /* 👈 permite bajar */
+    padding-bottom: 20px;
+  }
+}
+
+
     @keyframes zoomIn {
-      from { transform: scale(0.6); opacity: 0; }
+      from { transform: scale(0.7); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
+    }
+
+    /* 💓 EFECTO LATIDO */
+    @keyframes heartbeat {
+      0%   { transform: scale(1) rotate(-2deg); }
+      30%  { transform: scale(1.05) rotate(-2deg); }
+      60%  { transform: scale(1) rotate(-2deg); }
+      100% { transform: scale(1) rotate(-2deg); }
     }
   </style>
 </head>
 <body>
 
-  <!-- VIDEO DE FONDO -->
+  <!-- 🎥 VIDEO DE FONDO -->
   <video autoplay muted loop playsinline id="bgVideo">
     <source src="media/video-fondo.mp4" type="video/mp4">
   </video>
@@ -148,35 +181,44 @@
     ];
 
     noBtn.addEventListener("click", () => {
-      yesGrow += 500;
+      yesGrow += 5;
       noGrow = Math.max(noGrow - 1, 0.3);
 
-      // Empuje real
       yesBtn.style.flexGrow = yesGrow;
       noBtn.style.flexGrow = noGrow;
 
-      // Tamaño controlado
       const size = Math.min(18 + yesGrow, 42);
       yesBtn.style.fontSize = size + "px";
       noBtn.style.fontSize = Math.max(12, 18 - yesGrow / 2) + "px";
 
-      // Subir botones hacia el centro (solo móvil)
       if (window.innerWidth <= 768) {
         const lift = Math.min(yesGrow * 2, 120);
         buttons.style.transform = `translateY(-${lift}px)`;
       }
 
-      // Cambiar texto del NO
       noBtn.innerHTML = frasesNo[Math.floor(Math.random() * frasesNo.length)];
     });
 
     yesBtn.addEventListener("click", () => {
-      media.innerHTML = `<img src="media/sabia-que-si-gif.gif">`;
+      media.innerHTML = `
+        <div class="final-content">
+          <img src="media/sabia-que-si-gif.gif" alt="Sabía que dirías que sí">
+          <div class="emma-card" id="emmaCard">
+            <img src="media/emma.jpeg" alt="Emma">
+          </div>
+        </div>
+      `;
+
       media.classList.add("big");
       buttons.style.display = "none";
+
+      // ⏳ Mostrar a Emma después de 2 segundos
+      setTimeout(() => {
+        const emma = document.getElementById("emmaCard");
+        if (emma) emma.classList.add("show");
+      }, 2000);
     });
   </script>
 
 </body>
 </html>
-
