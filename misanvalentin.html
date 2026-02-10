@@ -40,6 +40,14 @@
       z-index: 10;
     }
 
+    .media.big {
+      width: 90vw;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding-bottom: 20px;
+      animation: zoomIn 1.2s ease;
+    }
+
     .media img {
       width: 100%;
       border-radius: 20px;
@@ -78,7 +86,6 @@
       flex-grow: 1;
     }
 
-    /* BOTONES EN COLUMNA EN MÓVIL */
     @media (max-width: 768px) {
       .buttons {
         flex-direction: column;
@@ -94,62 +101,82 @@
       gap: 18px;
     }
 
-    /* TARJETA EMMA (inicia oculta) */
+    .final-content > img {
+      max-height: 80vh;
+      object-fit: contain;
+    }
+
+    /* EMMA */
     .emma-card {
       background: rgba(255,255,255,0.85);
       padding: 10px;
       border-radius: 16px;
       box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-      transform: translateY(-10px) rotate(-2deg);
       opacity: 0;
+      transform: translateY(-40px) rotate(-2deg);
       transition: all 0.8s ease;
     }
 
     .emma-card img {
-      display: block;
       width: 220px;
       max-width: 80vw;
       border-radius: 12px;
     }
 
-    /* Cuando aparece Emma */
     .emma-card.show {
       opacity: 1;
       transform: translateY(0) rotate(-2deg);
       animation: heartbeat 1.2s ease;
     }
 
-    /* IMAGEN FINAL GRANDE EN MÓVIL */
-@media (max-width: 768px) {
-  .media.big {
-    width: 90vw;
-    max-height: 85vh;     /* límite visual */
-    overflow-y: auto;    /* 👈 permite bajar */
-    padding-bottom: 20px;
-  }
-}
+    /* GALERÍA */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      width: 100%;
+      margin-top: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s ease;
+    }
 
+    .gallery.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
+    .gallery img {
+      width: 100%;
+      border-radius: 14px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+
+    /* ANIMACIONES */
     @keyframes zoomIn {
       from { transform: scale(0.7); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
 
-    /* 💓 EFECTO LATIDO */
     @keyframes heartbeat {
-      0%   { transform: scale(1) rotate(-2deg); }
-      30%  { transform: scale(1.05) rotate(-2deg); }
-      60%  { transform: scale(1) rotate(-2deg); }
+      0% { transform: scale(1) rotate(-2deg); }
+      30% { transform: scale(1.05) rotate(-2deg); }
+      60% { transform: scale(1) rotate(-2deg); }
       100% { transform: scale(1) rotate(-2deg); }
     }
   </style>
 </head>
 <body>
 
-  <!-- 🎥 VIDEO DE FONDO -->
+  <!-- VIDEO DE FONDO -->
   <video autoplay muted loop playsinline id="bgVideo">
     <source src="media/video-fondo.mp4" type="video/mp4">
   </video>
+
+  <!-- AUDIO DE FONDO -->
+  <audio id="music" loop>
+    <source src="media/cancion.mpeg" type="audio/mp4">
+  </audio>
 
   <div class="media" id="media">
     <img src="media/quieres-ser-gif.gif" alt="Gif inicial">
@@ -165,6 +192,7 @@
     const noBtn = document.getElementById("noBtn");
     const buttons = document.getElementById("buttons");
     const media = document.getElementById("media");
+    const music = document.getElementById("music");
 
     let yesGrow = 1;
     let noGrow = 1;
@@ -200,11 +228,22 @@
     });
 
     yesBtn.addEventListener("click", () => {
+      // Iniciar música (permitido por interacción)
+      music.play().catch(() => {});
+
       media.innerHTML = `
         <div class="final-content">
           <img src="media/sabia-que-si-gif.gif" alt="Sabía que dirías que sí">
+
           <div class="emma-card" id="emmaCard">
             <img src="media/emma.jpeg" alt="Emma">
+          </div>
+
+          <div class="gallery" id="gallery">
+            <img src="media/novios1.jpeg">
+            <img src="media/novios2.jpeg">
+            <img src="media/novios3.jpeg">
+            <img src="media/novios4.jpeg">
           </div>
         </div>
       `;
@@ -212,11 +251,30 @@
       media.classList.add("big");
       buttons.style.display = "none";
 
-      // ⏳ Mostrar a Emma después de 2 segundos
-      setTimeout(() => {
-        const emma = document.getElementById("emmaCard");
-        if (emma) emma.classList.add("show");
-      }, 2000);
+      // Emma después de 2s
+setTimeout(() => {
+  const emma = document.getElementById("emmaCard");
+  emma.classList.add("show");
+
+  // 👇 bajar suavemente a Emma
+  emma.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}, 4000);
+
+// Galería después de 4s
+setTimeout(() => {
+  const gallery = document.getElementById("gallery");
+  gallery.classList.add("show");
+
+  // 👇 bajar suavemente a la galería
+  gallery.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}, 8000);
+
     });
   </script>
 
