@@ -49,13 +49,13 @@
     }
 
     .buttons {
-      display: flex;
-      width: 100%;
-      max-width: 600px;
-      gap: 16px;
-      align-items: stretch;
-      z-index: 10;
-    }
+  display: flex;
+  width: 100%;
+  max-width: 400px;
+  gap: 16px;
+  align-items: stretch;
+  z-index: 10;
+}
 
     button {
       border: none;
@@ -113,6 +113,21 @@
     border-radius: 20px;
   }
 }
+/* =========================
+   BOTONES EN COLUMNA EN MOVIL
+========================= */
+@media (max-width: 768px) {
+  .buttons {
+    flex-direction: column;
+    max-width: 90vw;
+  }
+
+  button {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
 
   </style>
 </head>
@@ -163,7 +178,9 @@
         noGrow -= 1;
       }
 
-      yesBtn.style.flexGrow = yesGrow;
+      const newSize = Math.min(18 + yesGrow, 42); // límite seguro en móvil
+      yesBtn.style.fontSize = `${newSize}px`;
+
       noBtn.style.flexGrow = Math.max(noGrow, MIN_NO);
 
       yesBtn.style.fontSize = `${18 + yesGrow}px`;
@@ -187,3 +204,4 @@
 
 </body>
 </html>
+
